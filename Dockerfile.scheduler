@@ -1,0 +1,5 @@
+FROM python:3.11-slim
+WORKDIR /app
+COPY . /app
+RUN pip install --no-cache-dir -r requirements.txt
+CMD ["python", "-c", "import asyncio; from src.scheduler.jobs import start_scheduler; asyncio.run(start_scheduler()); import time; time.sleep(999999)"]

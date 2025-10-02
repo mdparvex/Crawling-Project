@@ -1,0 +1,62 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:6
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - '27017:27017'  # Remove or restrict in production if not needed externally
+    env_file: .env.example
+    # environment:
+    #   - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
+    #   - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+    #   - MONGO_INITDB_DATABASE=${MONGO_DB}
+    healthcheck:
+      test: ["CMD", "mongo", "--username", "$MONGO_ROOT_USERNAME", "--password", "$MONGO_ROOT_PASSWORD", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  api:
+    build: .
+    command: ./entrypoint.sh
+    volumes:
+      - ./:/app
+    ports:
+      - '8002:8000'
+    env_file: .env.example
+    depends_on:
+      - mongo
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile.scheduler
+    volumes:
+      - ./:/app
+    env_file: .env.example
+    depends_on:
+      - mongo
+
+  crawler:
+    build:
+      context: .
+      dockerfile: Dockerfile.crawler
+    volumes:
+      - ./:/app
+    env_file: .env.example
+    depends_on:
+      - mongo
+  # nginx:
+  #   image: nginx:1.25
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx-https.conf:/etc/nginx/conf.d/default.conf:ro
+  #     - ./certs:/etc/letsencrypt:ro
+  #   depends_on:
+  #     - api
+
+volumes:
+  mongo_data:

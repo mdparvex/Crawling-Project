@@ -1,0 +1,164 @@
+## Sample MongoDB Document Structures
+
+### books Collection
+```json
+{
+	"_id": "ObjectId",
+	"url": "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html",
+	"title": "A Light in the Attic",
+	"description": "A collection of poems...",
+	"category": "Poetry",
+	"price_including_tax": 51.77,
+	"price_excluding_tax": 51.77,
+	"availability": "In stock (22 available)",
+	"num_reviews": 0,
+	"image_url": "https://books.toscrape.com/media/cache/xx/a-light-in-the-attic.jpg",
+	"rating": 3,
+	"crawl_timestamp": "2025-10-02T12:34:56.789Z",
+	"source_url": "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html",
+	"status": "ok",
+	"raw_html": "<html>...</html>",
+	"fingerprint": "e3b0c44298fc1c149afbf4c8996fb924..."
+}
+```
+
+### change_log Collection
+```json
+{
+	"_id": "ObjectId",
+	"book_url": "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html",
+	"field": "price_including_tax",
+	"old": 51.77,
+	"new": 45.00,
+	"timestamp": "2025-10-02T13:00:00.000Z"
+}
+```
+
+### crawl_progress Collection
+```json
+{
+	"_id": "ObjectId",
+	"url": "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
+}
+```
+
+
+# FK Crawler
+
+A production-ready, async Python project for crawling [books.toscrape.com](https://books.toscrape.com), detecting changes, and serving data via a FastAPI API with API-key authentication, rate limiting, and daily change reporting.
+
+---
+
+## Features
+
+- **Async crawling** with httpx and BeautifulSoup
+- **MongoDB** storage for books, change logs, and logs
+- **Change detection** (price, availability, etc.) and logging
+- **API** for querying books and changes, with filtering, sorting, and pagination
+- **API key authentication** and **rate limiting** (100 requests/hour)
+- **Daily scheduler** for crawling and change reporting (APScheduler)
+- **Email alerts** for new books and significant changes
+- **Daily CSV report** of changes sent to admin
+- **OpenAPI/Swagger docs** at `/docs`
+- **Dockerized** for easy deployment
+
+---
+
+## Project Structure
+
+```
+src/
+	api/         # FastAPI app, routes, security
+	crawler/     # Scraper, diff logic, schema
+	db/          # MongoDB async wrapper
+	scheduler/   # APScheduler jobs, daily report
+	utils/       # Logging, alerting, helpers
+	tests/       # Pytest tests
+```
+
+---
+
+## Setup Instructions
+
+### 1. Prerequisites
+
+- Python 3.11+
+- Docker & Docker Compose (recommended for local/dev)
+- MongoDB (runs as a container by default)
+
+### 2. Configuration
+
+Copy `.env.example` to `.env` and fill in your secrets and settings:
+
+```env
+MONGO_URI=mongodb://mongo:27017/fk_crawler
+MONGO_DB=fk_crawler
+API_KEY=your_api_key_here
+CRAWL_CONCURRENCY=10
+CRAWL_TIMEOUT=20
+RATE_LIMIT=100/hour
+BASE_URL=https://books.toscrape.com
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=your_email@example.com
+SMTP_PASS=your_password
+ALERT_EMAIL_TO=admin@example.com
+ALERT_EMAIL_FROM=your_email@example.com
+```
+
+### 3. Build & Run (Docker)
+
+```sh
+docker-compose up --build
+```
+
+- API: http://localhost:8000 (docs at `/docs`)
+- MongoDB: localhost:27017
+
+### 4. Manual Crawl
+
+```sh
+python -m src.crawler.main
+```
+
+---
+
+## API Overview
+
+- **GET /books**  
+	List books with filters: `category`, `min_price`, `max_price`, `rating`, `sort_by`, `page`, `size`
+- **GET /books/{book_id}**  
+	Get full details for a book
+- **GET /changes**  
+	View recent changes (price, new books, etc.)
+
+All endpoints require `X-API-KEY` header.
+
+---
+
+## Dependency Versions
+
+See `requirements.txt` for all Python dependencies:
+
+- fastapi
+- httpx
+- beautifulsoup4
+- lxml
+- motor
+- pydantic
+- python-dotenv
+- apscheduler
+- slowapi
+- pymongo
+- pytest, pytest-asyncio
+
+---
+
+## Development & Testing
+
+- Run tests: `pytest src/tests/`
+- Linting and formatting: (add your preferred tools)
+
+---
+
+

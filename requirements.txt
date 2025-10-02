@@ -1,0 +1,15 @@
+fastapi
+uvicorn[standard]
+httpx
+beautifulsoup4
+lxml
+motor
+pydantic
+python-dotenv
+apscheduler
+pytest
+pytest-asyncio
+slowapi
+pymongo
+python-multipart
+python-dotenv
