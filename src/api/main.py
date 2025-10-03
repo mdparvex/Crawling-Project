@@ -33,7 +33,7 @@ async def startup():
     # initialize DB client
     db = await Mongo.get_db()
     # Ensure indexes for efficient querying and deduplication
-    await db.books.create_index('url', unique=True)
+    await db.books.create_index('source_url', unique=True)
     await db.books.create_index('category')
     await db.books.create_index('rating')
     await db.books.create_index('price_excluding_tax')

@@ -7,7 +7,7 @@ from src.utils.alerting import send_alert_email
 async def generate_and_send_daily_change_report():
     db = await Mongo.get_db()
     # Get changes from the last 24 hours
-    since = datetime.utcnow() - timedelta(days=1)
+    since = datetime.now(__import__('datetime').timezone.utc) - timedelta(days=1)
     cursor = db.change_log.find({'timestamp': {'$gte': since}})
     changes = [doc async for doc in cursor]
     if not changes:
@@ -27,6 +27,6 @@ async def generate_and_send_daily_change_report():
     csv_content = output.getvalue()
     output.close()
     # Send email with CSV attachment
-    subject = f"Daily Book Change Report - {datetime.utcnow().date()}"
+    subject = f"Daily Book Change Report - {datetime.now(__import__('datetime').timezone.utc).date()}"
     body = "See attached CSV for today's book changes."
     await send_alert_email(subject, body, attachment=csv_content, filename="daily_change_report.csv")

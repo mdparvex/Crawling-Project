@@ -35,6 +35,9 @@ async def list_books(request: Request, category: Optional[str] = None, min_price
     async for d in cursor.skip((page-1)*size).limit(size):
         d['id'] = str(d.get('_id'))
         d.pop('_id', None)
+        # Remove any fields not in schema
+        allowed = {'crawl_timestamp','status','source_url','title','description','category','price_including_tax','price_excluding_tax','availability','num_reviews','image_url','rating','id'}
+        d = {k: v for k, v in d.items() if k in allowed}
         items.append(d)
     return {'items': items, 'page': page, 'size': size}
 
@@ -48,4 +51,6 @@ async def get_book(request: Request, book_id: str):
         raise HTTPException(404, 'Not found')
     b['id'] = str(b['_id'])
     b.pop('_id', None)
+    allowed = {'crawl_timestamp','status','source_url','title','description','category','price_including_tax','price_excluding_tax','availability','num_reviews','image_url','rating','id'}
+    b = {k: v for k, v in b.items() if k in allowed}
     return b
