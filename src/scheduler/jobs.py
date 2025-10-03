@@ -12,9 +12,9 @@ scheduler = AsyncIOScheduler()
 
 async def detect_changes_job():
     db = await Mongo.get_db()
-    print('Starting change detection crawl at', datetime.utcnow())
+    print('Starting change detection crawl at', datetime.now(__import__('datetime').timezone.utc))
     await run_full_crawl(limit=50)  # limit for daily run to be faster; adjust as needed
-    print('Change detection crawl finished at', datetime.utcnow())
+    print('Change detection crawl finished at', datetime.now(__import__('datetime').timezone.utc))
 
 async def daily_report_job():
     print('Generating and sending daily change report...')

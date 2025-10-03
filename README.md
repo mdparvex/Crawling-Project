@@ -1,24 +1,27 @@
+
+# FK Crawler
+
+A production-ready, async Python project for crawling [books.toscrape.com](https://books.toscrape.com), detecting changes, and serving data via a FastAPI API with API-key authentication, rate limiting, and daily change reporting.
+
+---
 ## Sample MongoDB Document Structures
 
 ### books Collection
 ```json
 {
-	"_id": "ObjectId",
-	"url": "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html",
-	"title": "A Light in the Attic",
-	"description": "A collection of poems...",
-	"category": "Poetry",
-	"price_including_tax": 51.77,
-	"price_excluding_tax": 51.77,
-	"availability": "In stock (22 available)",
-	"num_reviews": 0,
-	"image_url": "https://books.toscrape.com/media/cache/xx/a-light-in-the-attic.jpg",
-	"rating": 3,
-	"crawl_timestamp": "2025-10-02T12:34:56.789Z",
-	"source_url": "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html",
-	"status": "ok",
-	"raw_html": "<html>...</html>",
-	"fingerprint": "e3b0c44298fc1c149afbf4c8996fb924..."
+  "_id": "ObjectId",
+  "crawl_timestamp": "2025-10-02T12:34:56.789Z",
+  "status": "ok",
+  "source_url": "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html",
+  "title": "A Light in the Attic",
+  "description": "A collection of poems...",
+  "category": "Poetry",
+  "price_including_tax": 51.77,
+  "price_excluding_tax": 51.77,
+  "availability": "In stock (22 available)",
+  "num_reviews": 0,
+  "image_url": "https://books.toscrape.com/media/cache/xx/a-light-in-the-attic.jpg",
+  "rating": 3
 }
 ```
 
@@ -37,15 +40,31 @@
 ### crawl_progress Collection
 ```json
 {
-	"_id": "ObjectId",
-	"url": "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
+  "_id": "ObjectId",
+  "source_url": "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
 }
 ```
+## Project Setup Flow
 
+1. **Clone the repository:**
+	```sh
+	git clone https://github.com/mdparvex/Crawling-Project.git
+	cd Crawling-Project/fk-crawler
+	```
+2. **Configure environment:**
+	- Copy `.env.example` to `.env` and fill in your secrets and settings.
+3. **Build and run with Docker Compose:**
+	```sh
+	docker-compose up --build
+	```
+	- API: http://localhost:8000 (docs at `/docs`)
+	- MongoDB: localhost:27017
+4. **Manual crawl (optional):**
+	```sh
+	python -m src.crawler.main
+	```
 
-# FK Crawler
-
-A production-ready, async Python project for crawling [books.toscrape.com](https://books.toscrape.com), detecting changes, and serving data via a FastAPI API with API-key authentication, rate limiting, and daily change reporting.
+---
 
 ---
 
@@ -136,28 +155,98 @@ All endpoints require `X-API-KEY` header.
 
 ---
 
-## Dependency Versions
-
-See `requirements.txt` for all Python dependencies:
-
-- fastapi
-- httpx
-- beautifulsoup4
-- lxml
-- motor
-- pydantic
-- python-dotenv
-- apscheduler
-- slowapi
-- pymongo
-- pytest, pytest-asyncio
-
----
 
 ## Development & Testing
 
-- Run tests: `pytest src/tests/`
-- Linting and formatting: (add your preferred tools)
+
+### Running Tests
+
+- Run all tests:
+	```sh
+	pytest src/tests/
+	```
+- Example test file: `src/tests/test_api.py` covers API endpoints for `/books`, `/books/{book_id}`, and `/changes`.
+
+---
+
+## API Documentation & Example Responses
+
+Interactive API docs are available at: [http://localhost:8000/docs](http://localhost:8000/docs)
+
+### GET /books
+
+**Description:** List books with filters and pagination.
+
+**Query Parameters:**
+- `category`, `min_price`, `max_price`, `rating`, `sort_by`, `page`, `size`
+
+**Response Example:**
+```json
+{
+	"items": [
+		{
+			"id": "651b2c7e8f1b2a001e7e7e7e",
+			"crawl_timestamp": "2025-10-02T12:34:56.789Z",
+			"status": "ok",
+			"source_url": "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html",
+			"title": "A Light in the Attic",
+			"description": "A collection of poems...",
+			"category": "Poetry",
+			"price_including_tax": 51.77,
+			"price_excluding_tax": 51.77,
+			"availability": "In stock (22 available)",
+			"num_reviews": 0,
+			"image_url": "https://books.toscrape.com/media/cache/xx/a-light-in-the-attic.jpg",
+			"rating": 3
+		}
+	],
+	"page": 1,
+	"size": 20
+}
+```
+
+### GET /books/{book_id}
+
+**Description:** Get full details for a book by its ID.
+
+**Response Example:**
+```json
+{
+	"id": "651b2c7e8f1b2a001e7e7e7e",
+	"crawl_timestamp": "2025-10-02T12:34:56.789Z",
+	"status": "ok",
+	"source_url": "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html",
+	"title": "A Light in the Attic",
+	"description": "A collection of poems...",
+	"category": "Poetry",
+	"price_including_tax": 51.77,
+	"price_excluding_tax": 51.77,
+	"availability": "In stock (22 available)",
+	"num_reviews": 0,
+	"image_url": "https://books.toscrape.com/media/cache/xx/a-light-in-the-attic.jpg",
+	"rating": 3
+}
+```
+
+### GET /changes
+
+**Description:** View recent changes (price, new books, etc.)
+
+**Response Example:**
+```json
+[
+	{
+		"_id": "651b2c7e8f1b2a001e7e7e7f",
+		"book_url": "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html",
+		"field": "price_including_tax",
+		"old": 51.77,
+		"new": 45.00,
+		"timestamp": "2025-10-02T13:00:00.000Z"
+	}
+]
+```
+
+---
 
 ---
 

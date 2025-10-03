@@ -3,8 +3,11 @@ from pydantic import BaseModel, AnyUrl, Field
 from typing import Optional
 from datetime import datetime
 
+
 class Book(BaseModel):
-    url: AnyUrl
+    crawl_timestamp: datetime = Field(default_factory=lambda: datetime.now(__import__('datetime').timezone.utc))
+    status: str = "ok"
+    source_url: AnyUrl
     title: str
     description: Optional[str]
     category: Optional[str]
@@ -14,8 +17,3 @@ class Book(BaseModel):
     num_reviews: Optional[int]
     image_url: Optional[AnyUrl]
     rating: Optional[int]
-    crawl_timestamp: datetime = Field(default_factory=datetime.utcnow)
-    source_url: AnyUrl
-    status: str = "ok"
-    raw_html: Optional[str]
-    fingerprint: Optional[str]

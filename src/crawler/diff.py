@@ -12,16 +12,16 @@ async def compute_changes_and_log(db, old_doc: Dict[str, Any], new_doc: Dict[str
     if not old_doc:
         # new insertion: log as 'new' change type
         entry = {
-            'book_url': new_doc.get('url'),
+            'book_url': new_doc.get('source_url'),
             'field': '__new__',
             'old': None,
             'new': new_doc,
-            'timestamp': datetime.utcnow()
+            'timestamp': datetime.now(__import__('datetime').timezone.utc)
         }
         await db.change_log.insert_one(entry)
         # Send alert for new book
         subject = f"New Book Detected: {new_doc.get('title','(no title)')}"
-        body = f"A new book was added.\nURL: {new_doc.get('url')}\nTitle: {new_doc.get('title')}\nCategory: {new_doc.get('category')}\nPrice: {new_doc.get('price_excluding_tax')}"
+        body = f"A new book was added.\nURL: {new_doc.get('source_url')}\nTitle: {new_doc.get('title')}\nCategory: {new_doc.get('category')}\nPrice: {new_doc.get('price_excluding_tax')}"
         asyncio.create_task(send_alert_email(subject, body))
         return [{'field':'__new__'}]
     changes = []
@@ -39,11 +39,11 @@ async def compute_changes_and_log(db, old_doc: Dict[str, Any], new_doc: Dict[str
             new_n = new
         if old_n != new_n:
             change = {
-                'book_url': new_doc.get('url'),
+                'book_url': new_doc.get('source_url'),
                 'field': f,
                 'old': old,
                 'new': new,
-                'timestamp': datetime.utcnow()
+                'timestamp': datetime.now(__import__('datetime').timezone.utc)
             }
             changes.append(change)
     if changes:

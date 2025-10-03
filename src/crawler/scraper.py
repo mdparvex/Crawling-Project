@@ -68,7 +68,8 @@ class Scraper:
                 if w in rating_map:
                     rating = rating_map[w]
         book = Book(
-            url=url,
+            status="ok",
+            source_url=url,
             title=title,
             description=description,
             category=category,
@@ -77,10 +78,7 @@ class Scraper:
             availability=availability,
             num_reviews=num_reviews,
             image_url=image_url,
-            rating=rating,
-            source_url=url,
-            raw_html=html,
-            fingerprint=fingerprint_from_html(html)
+            rating=rating
         )
         return book
 
