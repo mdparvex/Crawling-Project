@@ -44,28 +44,6 @@ A production-ready, async Python project for crawling [books.toscrape.com](https
   "source_url": "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
 }
 ```
-## Project Setup Flow
-
-1. **Clone the repository:**
-	```sh
-	git clone https://github.com/mdparvex/Crawling-Project.git
-	cd Crawling-Project/fk-crawler
-	```
-2. **Configure environment:**
-	- Copy `.env.example` to `.env` and fill in your secrets and settings.
-3. **Build and run with Docker Compose:**
-	```sh
-	docker-compose up --build
-	```
-	- API: http://localhost:8000 (docs at `/docs`)
-	- MongoDB: localhost:27017
-4. **Manual crawl (optional):**
-	```sh
-	python -m src.crawler.main
-	```
-
----
-
 ---
 
 ## Features
@@ -105,7 +83,13 @@ src/
 - Docker & Docker Compose (recommended for local/dev)
 - MongoDB (runs as a container by default)
 
-### 2. Configuration
+### 2. Clone the repository
+	```sh
+	git clone https://github.com/mdparvex/Crawling-Project.git
+	cd Crawling-Project/fk-crawler
+	```
+
+### 3. Configuration
 
 Copy `.env.example` to `.env` and fill in your secrets and settings:
 
@@ -125,7 +109,7 @@ ALERT_EMAIL_TO=admin@example.com
 ALERT_EMAIL_FROM=your_email@example.com
 ```
 
-### 3. Build & Run (Docker)
+### 4. Build & Run (Docker)
 
 ```sh
 docker-compose up --build
@@ -134,7 +118,7 @@ docker-compose up --build
 - API: http://localhost:8000 (docs at `/docs`)
 - MongoDB: localhost:27017
 
-### 4. Manual Crawl
+### 5. Manual Crawl (optional)
 
 ```sh
 python -m src.crawler.main
