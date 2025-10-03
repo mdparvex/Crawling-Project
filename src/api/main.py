@@ -1,5 +1,3 @@
-
-
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from .routes import books, changes
@@ -39,7 +37,7 @@ async def startup():
     await db.books.create_index('price_excluding_tax')
     await db.books.create_index('num_reviews')
     # start the scheduler in background (will run APScheduler loop)
-    start_scheduler()
+    #start_scheduler() #schedular is running in Dockerfile.scheduler()
 
 @app.get('/')
 async def root():

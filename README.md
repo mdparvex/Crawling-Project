@@ -248,6 +248,25 @@ Interactive API docs are available at: [http://localhost:8000/docs](http://local
 
 ---
 
+# Screen soot
+
+### Schedulars are running properly
+![alt text](image.png)
+
 ---
 
+### Mail sending properly when New books are added
+![alt text](image-1.png)
 
+---
+# sample response
+### GET /books/?
+![alt text](image-2.png)
+
+---
+### GET /books/{book_id}
+![alt text](image-3.png)
+
+---
+### GET /changes/?limit=50
+![alt text](image-4.png)

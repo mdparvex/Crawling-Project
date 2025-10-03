@@ -5,7 +5,7 @@ from fastapi.security.api_key import APIKeyHeader
 from dotenv import load_dotenv
 load_dotenv()
 
-API_KEY = os.getenv('API_KEY','your_api_key')
+API_KEY = os.getenv('API_KEY',None)
 api_key_header = APIKeyHeader(name='X-API-KEY', auto_error=False)
 
 async def get_api_key(api_key_header: str = Security(api_key_header)):
