@@ -30,3 +30,6 @@ async def start_scheduler():
         pass
     scheduler.start()
     print('Scheduler started with jobs:', scheduler.get_jobs())
+
+if __name__ == "__main__":
+    asyncio.run(start_scheduler())

@@ -13,5 +13,6 @@ async def list_changes(request: Request, limit: int = 50):
     out = []
     cursor = db.change_log.find().sort('timestamp', -1).limit(limit)
     async for c in cursor:
+        c['_id'] = str(c['_id'])
         out.append(c)
     return out

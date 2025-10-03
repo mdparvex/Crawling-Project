@@ -6,13 +6,13 @@ from .scraper import Scraper
 from dotenv import load_dotenv
 from src.db.mongo import Mongo
 from src.crawler.diff import compute_changes_and_log
+from src.crawler.utils import retry_async
 
 load_dotenv()
 BASE_URL = os.getenv('BASE_URL','https://books.toscrape.com')
 CONCURRENCY = int(os.getenv('CRAWL_CONCURRENCY', '10'))
 
 async def run_full_crawl(limit=None):
-    from src.crawler.utils import retry_async
     async with AsyncClient(base_url=BASE_URL, timeout=20.0, follow_redirects=True) as client:
         scraper = Scraper(BASE_URL, client, concurrency=CONCURRENCY)
         links = await retry_async(lambda: scraper.crawl_index(BASE_URL))

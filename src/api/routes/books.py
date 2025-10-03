@@ -4,6 +4,7 @@ from src.api.limiter import limiter
 from typing import Optional
 from src.db.mongo import Mongo
 from src.api.security import get_api_key
+from bson import ObjectId
 
 router = APIRouter()
 
@@ -45,7 +46,6 @@ async def list_books(request: Request, category: Optional[str] = None, min_price
 @limiter.limit("100/hour")
 async def get_book(request: Request, book_id: str):
     db = await Mongo.get_db()
-    from bson import ObjectId
     b = await db.books.find_one({'_id': ObjectId(book_id)})
     if not b:
         raise HTTPException(404, 'Not found')
