@@ -13,3 +13,5 @@ slowapi
 pymongo
 python-multipart
 python-dotenv
+celery[redis]
+redis
