@@ -234,12 +234,12 @@ Interactive API docs are available at: [http://localhost:8000/docs](http://local
 
 # Screen soot
 
-### Schedulars are running properly
-![alt text](image.png)
+### Schedulars are running properly in Celery beat
+![alt text](image-5.png)
 
 ---
 
-### Mail sending properly when New books are added
+### Alert Mail is sending properly when New books are added or any significant change.
 ![alt text](image-1.png)
 
 ---

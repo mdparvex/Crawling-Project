@@ -21,7 +21,7 @@ async def compute_changes_and_log(db, old_doc: Dict[str, Any], new_doc: Dict[str
         await db.change_log.insert_one(entry)
         # logger.info("New book detected: %s (Category: %s, Price: %s)",
         #             new_doc.get('title'), new_doc.get('category'), new_doc.get('price_excluding_tax'))
-        # Send alert for new book
+        # Send alert for new book in mail
         subject = f"New Book Detected: {new_doc.get('title','(no title)')}"
         body = f"A new book was added.\nURL: {new_doc.get('source_url')}\nTitle: {new_doc.get('title')}\nCategory: {new_doc.get('category')}\nPrice: {new_doc.get('price_excluding_tax')}"
         asyncio.create_task(send_alert_email(subject, body))
@@ -50,7 +50,7 @@ async def compute_changes_and_log(db, old_doc: Dict[str, Any], new_doc: Dict[str
             changes.append(change)
     if changes:
         await db.change_log.insert_many(changes)
-        # Send alert for significant changes
+        # Send alert for significant changes in mail
         for change in changes:
             # logger.info("Book changed [%s]: %s -> %s (URL: %s)",
             #             change['field'], change['old'], change['new'], change['book_url'])
