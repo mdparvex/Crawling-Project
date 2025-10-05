@@ -32,6 +32,7 @@ async def list_books(request: Request, category: Optional[str] = None, min_price
             cursor = cursor.sort('rating', -1)
         elif sort_by == 'reviews':
             cursor = cursor.sort('num_reviews', -1)
+    total = await db.books.count_documents(q)
     items = []
     async for d in cursor.skip((page-1)*size).limit(size):
         d['id'] = str(d.get('_id'))
@@ -40,7 +41,7 @@ async def list_books(request: Request, category: Optional[str] = None, min_price
         allowed = {'crawl_timestamp','status','source_url','title','description','category','price_including_tax','price_excluding_tax','availability','num_reviews','image_url','rating','id'}
         d = {k: v for k, v in d.items() if k in allowed}
         items.append(d)
-    return {'items': items, 'page': page, 'size': size}
+    return {'items': items, 'page': page, 'size': size, 'total': total}
 
 @router.get('/{book_id}', dependencies=[Depends(get_api_key)])
 @limiter.limit("100/hour")
