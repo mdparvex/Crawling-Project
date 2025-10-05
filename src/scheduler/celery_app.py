@@ -16,6 +16,6 @@ celery_app.conf.beat_schedule = {
     },
     "daily-report": {
         "task": "tasks.daily_report_job",
-        "schedule": crontab(hour=0, minute=5),  # <-- FIXED
+        "schedule": crontab(hour=0, minute=5),
     },
 }
