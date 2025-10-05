@@ -53,7 +53,7 @@ A production-ready, async Python project for crawling [books.toscrape.com](https
 - **Change detection** (price, availability, etc.) and logging
 - **API** for querying books and changes, with filtering, sorting, and pagination
 - **API key authentication** and **rate limiting** (100 requests/hour)
-- **Daily scheduler** for crawling and change reporting (APScheduler)
+- **Daily scheduler** for crawling and change reporting (celery beat)
 - **Email alerts** for new books and significant changes
 - **Daily CSV report** of changes sent to admin
 - **OpenAPI/Swagger docs** at `/docs`
@@ -234,12 +234,12 @@ Interactive API docs are available at: [http://localhost:8000/docs](http://local
 
 # Screen soot
 
-### Schedulars are running properly
-![alt text](image.png)
+### Schedulars are running properly in Celery beat
+![alt text](image-5.png)
 
 ---
 
-### Mail sending properly when New books are added
+### Alert Mail is sending properly when New books are added or any significant change.
 ![alt text](image-1.png)
 
 ---

@@ -28,15 +28,15 @@ services:
     depends_on:
       - mongo
 
-  scheduler:
-    build:
-      context: .
-      dockerfile: Dockerfile.scheduler
-    volumes:
-      - ./:/app
-    env_file: .env.example
-    depends_on:
-      - mongo
+  # scheduler:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.scheduler
+  #   volumes:
+  #     - ./:/app
+  #   env_file: .env.example
+  #   depends_on:
+  #     - mongo
 
   crawler:
     build:
@@ -57,6 +57,29 @@ services:
   #     - ./certs:/etc/letsencrypt:ro
   #   depends_on:
   #     - api
+  redis:
+    image: redis:7.0
+    container_name: redis_broker
+    ports:
+      - "6379:6379"
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    container_name: celery_worker
+    #command: celery -A app.celery_app.celery_app worker --loglevel=info
+    depends_on:
+      - redis
+
+  beat:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery-beat
+    container_name: celery_beat
+    #command: celery -A app.celery_app.celery_app beat --loglevel=info
+    depends_on:
+      - redis
 
 volumes:
   mongo_data:
